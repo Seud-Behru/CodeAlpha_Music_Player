@@ -1,0 +1,328 @@
+:root {
+  --hue: 12; /* changes with every track, see script.js */
+  --bg: #15111d;
+  --surface: #1e1829;
+  --surface-2: #2a2238;
+  --text: #f2eef8;
+  --muted: #a79fb5;
+  --accent: hsl(var(--hue) 88% 64%);
+  --accent-soft: hsl(var(--hue) 70% 45% / 0.22);
+  --track: #3a3049;
+  --font-head: "Unbounded", "Figtree", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--text);
+  background:
+    radial-gradient(900px 500px at 25% -10%, var(--accent-soft), transparent 70%),
+    var(--bg);
+  transition: background 0.6s ease;
+}
+
+button { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.app {
+  width: min(100% - 2rem, 980px);
+  margin: 0 auto;
+  padding: clamp(1.25rem, 4vw, 3rem) 0;
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 860px) {
+  .app { grid-template-columns: 1.05fr 1fr; align-items: start; }
+}
+
+/* ---------- Deck (now playing) ---------- */
+.deck {
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+  border-radius: 24px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.disc-wrap { display: grid; place-items: center; margin-bottom: 1.5rem; }
+
+.disc {
+  position: relative;
+  width: min(68vw, 280px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle, transparent 0 5px, rgba(255, 255, 255, 0.045) 5px 6px),
+    conic-gradient(#0d0b12, #23202b 18%, #0d0b12 38%, #23202b 58%, #0d0b12 78%, #23202b 100%);
+  box-shadow: 0 25px 45px -18px rgba(0, 0, 0, 0.7), 0 0 0 6px rgba(255, 255, 255, 0.03);
+  animation: spin 7s linear infinite;
+  animation-play-state: paused;
+}
+
+.disc.is-playing { animation-play-state: running; }
+
+.disc-label {
+  position: absolute;
+  inset: 31%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 25%, hsl(var(--hue) 95% 78%), hsl(var(--hue) 85% 55%) 60%, hsl(calc(var(--hue) + 30) 80% 40%));
+  transition: background 0.6s ease;
+}
+
+.disc-label::after {
+  content: "";
+  position: absolute;
+  inset: 42%;
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.now h1 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-head);
+  font-size: clamp(1.25rem, 3.4vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.now p { margin: 0; color: var(--muted); min-height: 1.5em; }
+
+/* ---------- Progress + range inputs ---------- */
+.progress {
+  display: grid;
+  grid-template-columns: 3rem 1fr 3rem;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.time {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.time:last-child { text-align: right; }
+
+.range {
+  --p: 0%;
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 99px;
+  background: linear-gradient(to right, var(--accent) var(--p), var(--track) var(--p));
+}
+.range::-moz-range-track {
+  height: 6px;
+  border-radius: 99px;
+  background: linear-gradient(to right, var(--accent) var(--p), var(--track) var(--p));
+}
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -5px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease;
+}
+.range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.range:hover::-webkit-slider-thumb,
+.range:active::-webkit-slider-thumb { transform: scale(1.25); }
+
+/* ---------- Controls ---------- */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.4rem, 2vw, 1rem);
+}
+
+.ctrl {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, color 0.2s ease;
+}
+.ctrl svg { fill: currentColor; }
+.ctrl:hover { background: var(--surface-2); }
+.ctrl:active { transform: scale(0.92); }
+
+.ctrl-sm { width: 2.5rem; height: 2.5rem; color: var(--muted); }
+.ctrl-sm[aria-pressed="true"],
+.ctrl-sm.is-on { color: var(--accent); }
+
+.ctrl-main {
+  width: 4.4rem;
+  height: 4.4rem;
+  background: var(--accent);
+  color: #1a1020;
+  box-shadow: 0 10px 25px -8px var(--accent);
+}
+.ctrl-main:hover { background: var(--accent); filter: brightness(1.08); transform: scale(1.05); }
+
+.one {
+  position: absolute;
+  right: 4px;
+  top: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* ---------- Volume + autoplay ---------- */
+.extras {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin-top: 1.25rem;
+}
+
+.volume { display: flex; align-items: center; gap: 0.25rem; flex: 1 1 150px; max-width: 240px; }
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.switch input { width: 1.05rem; height: 1.05rem; accent-color: var(--accent); }
+
+.message {
+  min-height: 1.4em;
+  margin: 1rem 0 0;
+  color: #ffb4a6;
+  font-size: 0.9rem;
+}
+
+/* ---------- Playlist ---------- */
+.playlist {
+  padding: 1.25rem;
+  border-radius: 24px;
+  background: var(--surface);
+}
+
+.playlist-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0.25rem 0.75rem;
+}
+.playlist h2 { margin: 0; font-family: var(--font-head); font-size: 1.05rem; }
+
+.add {
+  padding: 0.45rem 0.9rem;
+  border: 1.5px solid var(--track);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.add:hover { border-color: var(--accent); color: var(--accent); }
+
+.tracks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+.track {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.7rem 0.6rem;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.track:hover { background: var(--surface-2); }
+.track.is-current { background: var(--accent-soft); }
+
+.track-num { color: var(--muted); font-size: 0.9rem; text-align: center; font-variant-numeric: tabular-nums; }
+.track.is-current .track-num { color: var(--accent); }
+
+.track-info { min-width: 0; }
+.track-info strong,
+.track-info small {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.track-info strong { font-weight: 500; }
+.track-info small { color: var(--muted); }
+.track-dur { color: var(--muted); font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+
+/* tiny equaliser shown on the playing track instead of its number */
+.eq { display: none; align-items: flex-end; justify-content: center; gap: 2px; height: 14px; }
+.eq i {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transform-origin: bottom;
+  animation: bounce 0.9s ease-in-out infinite;
+}
+.eq i:nth-child(2) { animation-delay: -0.3s; }
+.eq i:nth-child(3) { animation-delay: -0.6s; }
+@keyframes bounce { 0%, 100% { transform: scaleY(0.25); } 50% { transform: scaleY(1); } }
+
+.track.is-current.is-playing .eq { display: flex; }
+.track.is-current.is-playing .track-num-text { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .disc { animation: none; }
+  .eq i { animation: none; transform: scaleY(0.7); }
+  body, .disc-label { transition: none; }
+}
