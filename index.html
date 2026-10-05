@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Music Player | CodeAlpha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Icons, defined once and reused with <use> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5l11 7L4 19z"/></symbol>
+    <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <main class="app">
+    <!-- ============ NOW PLAYING ============ -->
+    <section class="deck" aria-label="Now playing">
+      <div class="disc-wrap">
+        <div class="disc" id="disc" aria-hidden="true"><div class="disc-label"></div></div>
+      </div>
+
+      <div class="now">
+        <h1 id="title">Loading&hellip;</h1>
+        <p id="artist"></p>
+      </div>
+
+      <div class="progress">
+        <span id="current" class="time">0:00</span>
+        <input id="seek" class="range" type="range" min="0" max="100" step="0.1" value="0" aria-label="Seek">
+        <span id="duration" class="time">0:00</span>
+      </div>
+
+      <div class="controls">
+        <button id="shuffle" class="ctrl ctrl-sm" type="button" aria-label="Shuffle" aria-pressed="false" title="Shuffle (S)">
+          <svg width="22" height="22"><use href="#i-shuffle"/></svg>
+        </button>
+        <button id="prev" class="ctrl" type="button" aria-label="Previous track" title="Previous (P)">
+          <svg width="26" height="26"><use href="#i-prev"/></svg>
+        </button>
+        <button id="play" class="ctrl ctrl-main" type="button" aria-label="Play" title="Play / pause (Space)">
+          <svg width="30" height="30"><use id="playIcon" href="#i-play"/></svg>
+        </button>
+        <button id="next" class="ctrl" type="button" aria-label="Next track" title="Next (N)">
+          <svg width="26" height="26"><use href="#i-next"/></svg>
+        </button>
+        <button id="repeat" class="ctrl ctrl-sm" type="button" aria-label="Repeat: off" title="Repeat (R)">
+          <svg width="22" height="22"><use href="#i-repeat"/></svg>
+          <span class="one" id="repeatOne" hidden>1</span>
+        </button>
+      </div>
+
+      <div class="extras">
+        <div class="volume">
+          <button id="mute" class="ctrl ctrl-sm" type="button" aria-label="Mute" title="Mute (M)">
+            <svg width="22" height="22"><use id="volIcon" href="#i-volume"/></svg>
+          </button>
+          <input id="volume" class="range" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+        </div>
+        <label class="switch">
+          <input id="autoplay" type="checkbox" checked>
+          <span>Autoplay next</span>
+        </label>
+      </div>
+
+      <p class="message" id="message" role="status"></p>
+    </section>
+
+    <!-- ============ PLAYLIST ============ -->
+    <aside class="playlist" aria-label="Playlist">
+      <div class="playlist-head">
+        <h2>Playlist</h2>
+        <button id="addBtn" class="add" type="button">Add your songs</button>
+        <input id="files" type="file" accept="audio/*" multiple hidden>
+      </div>
+      <ol class="tracks" id="tracks"></ol>
+    </aside>
+  </main>
+
+  <audio id="audio" preload="metadata"></audio>
+  <script src="script.js"></script>
+</body>
+</html>
